@@ -20,7 +20,7 @@
 
     <div id="add" class="tab-content">
         <h2>Adicionar Restaurante</h2>
-        <form action="{{ route('restaurant.store') }}" method="POST">
+        <form action="#" method="POST">
             @csrf
             <label for="nome">Nome do Restaurante:</label><br>
             <input type="text" id="nome" name="nome" required><br>
