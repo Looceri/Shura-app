@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\RestauranteController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RestauranteController; // Add this import statement
 
 Route::middleware('auth')->group(function () {
-
-    Route::get('/restaurante', [RestauranteController::class, 'index'])->name('restaurante.crud');
-
+    Route::get('/restaurantes', [RestauranteController::class, 'index'])->name('restaurantes.index');
+    Route::post('/restaurantes', [RestauranteController::class, 'store'])->name('restaurantes.store');
+    Route::put('/restaurantes/{restaurante}', [RestauranteController::class, 'update'])->name('restaurantes.update');
 });
