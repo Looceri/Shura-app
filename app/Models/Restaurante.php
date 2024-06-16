@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class restaurante extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'user_id']; // Add 'name' to the fillable array
+    protected $fillable = ['nome', 'user_id','imagem', 'endereco', 'descricao']; // Add 'name' to the fillable array
 
     // A restaurant belongs to a user
     public function user()

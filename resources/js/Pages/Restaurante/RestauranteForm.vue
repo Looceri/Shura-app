@@ -1,31 +1,38 @@
 <template>
-    <form @submit.prevent="submit">
+    <form @submit.prevent="submit" enctype = "multipart/form-data">
         <div>
             <InputLabel for="nome" value="Nome" />
-            <TextInput id="nome" type="text" class="mt-1 block w-full" v-model="form.nome" required autofocus autocomplete="nome" />
+            <TextInput id="nome" type="text" class="mt-1 block w-full" v-model="form.nome" required autofocus
+                autocomplete="nome" />
         </div>
         <br>
         <div>
             <InputLabel for="endereco" value="Endereço" />
-            <TextInput id="endereco" type="text" class="mt-1 block w-full" v-model="form.endereco" required autofocus autocomplete="endereco" />
+            <TextInput id="endereco" type="text" class="mt-1 block w-full" v-model="form.endereco" required autofocus
+                autocomplete="endereco" />
         </div>
         <br>
         <div>
             <InputLabel for="descricao">Descrição</InputLabel>
-            <textarea id="descricao" class="mt-1 block w-full dark:bg-gray-800 dark:text-white" v-model="form.descricao" rows="5"></textarea>
+            <textarea id="descricao" class="mt-1 block w-full dark:bg-gray-800 dark:text-white" v-model="form.descricao"
+                rows="5"></textarea>
         </div>
         <br>
         <div>
             <InputLabel for="image">Imagem</InputLabel>
-            <input type="file" id="image" name="image" accept="image/*" @change="handleImageUpload" class="dark:bg-gray-800 dark:text-white">
+            <input type="file" id="image" name="image" accept="image/*" @change="handleImageUpload"
+                class="form-control-file dark:bg-gray-800 dark:text-white">
             <div v-if="form.image">
-                <img :src="form.image ? URL.createObjectURL(form.image) : ''" alt="Imagem do Restaurante" class="mt-2 rounded-md w-48 h-48 object-cover">
+                <img :src="form.image ? URL.createObjectURL(form.image) : ''" alt="Imagem do Restaurante"
+                    class="mt-2 rounded-md w-48 h-48 object-cover">
             </div>
         </div>
         <br>
         <div class="flex items-center gap-4">
-            <PrimaryButton :disabled="form.processing" type="submit">{{ editMode ? 'Update' : 'Registrar' }}</PrimaryButton>
-            <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0" leave-active-class="transition ease-in-out" leave-to-class="opacity-0">
+            <PrimaryButton :disabled="form.processing" type="submit">{{ editMode ? 'Update' : 'Registrar' }}
+            </PrimaryButton>
+            <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
+                leave-active-class="transition ease-in-out" leave-to-class="opacity-0">
                 <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
             </Transition>
         </div>
@@ -34,7 +41,7 @@
 </template>
 
 <script>
-import { useForm,usePage  } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import { ref, watch } from 'vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -87,7 +94,10 @@ export default {
             formData.append('endereco', form.endereco);
             formData.append('descricao', form.descricao);
             if (form.image) {
-                formData.append('image', form.image);
+                // Create a new file object with the selected image
+                const file = new File([form.image], form.image.name, { type: form.image.type });
+                // Append the file to the form data
+                formData.append('image', file);
             }
             formData.append('user_id', userId.value); // Adicionando userId ao FormData
 
