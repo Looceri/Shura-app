@@ -32,8 +32,13 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
-        return redirect()->intended(route('dashboard', absolute: false));
+dd( $request);
+        $restaurante = $request->input('restaurante');
+        if ($restaurante) {
+            return redirect()->intended(route('restaurantes.index', absolute: false));
+        } else {
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
     }
 
     /**

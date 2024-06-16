@@ -11,6 +11,8 @@ class RestauranteController extends Controller
     public function index()
     {
         $restaurantes = Restaurante::where('user_id', auth()->id())->get();
+
+        dd($restaurantes);
         return Inertia::render('Restaurante/ManageRestaurantes', ['restaurantes' => $restaurantes]);
     }
 
