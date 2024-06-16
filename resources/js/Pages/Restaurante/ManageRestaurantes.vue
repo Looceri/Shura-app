@@ -27,14 +27,27 @@
                 </div>
             </div>
         </template>
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
 
-        <div v-if="currentTab === 'register'">
-            <RestauranteForm @success="reloadRestaurantes" />
-        </div>
-        <div v-if="currentTab === 'edit'">
-            <RestauranteList :restaurantes="restaurantes" @edit="handleEdit" />
-            <div v-if="selectedRestaurante">
-                <RestauranteForm :restaurante="selectedRestaurante" editMode @success="reloadRestaurantes" />
+                    <div v-if="currentTab === 'register'">
+                        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2">
+                            Criar Restaurantes
+                        </h2>
+                        <RestauranteForm @success="reloadRestaurantes" />
+                    </div>
+                    <div v-if="currentTab === 'edit'">
+                        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2">
+                            Editar Restaurantes
+                        </h2>
+                        <RestauranteList :restaurantes="restaurantes" @edit="handleEdit" />
+                        <div v-if="selectedRestaurante">
+                            <RestauranteForm :restaurante="selectedRestaurante" editMode
+                                @success="reloadRestaurantes" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -47,11 +60,7 @@
 }
 
 .glow-button:hover {
-    background-color: #E2E8F0;
-    color: #2D3748;
-}
-
-.glow-button.dark:hover {
+    background-color: #e5e7eb;
     color: #2D3748;
 }
 </style>
