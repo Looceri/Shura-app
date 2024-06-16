@@ -46,6 +46,12 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        $restaurante = $request->input('restaurante');
+
+        if ($restaurante) {
+            return redirect()->intended(route('restaurantes.index', absolute: false));
+        } else {
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
     }
 }

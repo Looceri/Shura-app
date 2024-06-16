@@ -20,7 +20,6 @@ const form = useForm({
     email: '',
     password: '',
     remember: false,
-    restaurante: false,
 });
 
 const submit = () => {
@@ -57,6 +56,10 @@ const submit = () => {
 
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
+            <Link :href="route('register')"
+                class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+            Ainda não foi registado?
+            </Link>
 
             <div class="block mt-4">
                 <div class="flex items-center">
@@ -65,19 +68,12 @@ const submit = () => {
                         <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
                     </label>
                 </div>
-
-                <div class="flex items-center mt-2">
-                    <label class="flex items-center">
-                        <Checkbox name="restaurante" v-model:checked="form.restaurante" />
-                        <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">Ir para o seu Restarurante</span>
-                    </label>
-                </div>
             </div>
 
             <div class="flex items-center justify-end mt-4">
                 <Link v-if="canResetPassword" :href="route('password.request')"
                     class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                Forgot your password?
+                Esqueceu a sua password?
                 </Link>
 
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">

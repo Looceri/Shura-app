@@ -1,12 +1,12 @@
 <template>
     <form @submit.prevent="submit">
       <div>
-        <label for="name">Name:</label>
-        <input type="text" id="name" v-model="form.name">
+        <label for="nome">Name:</label>
+        <input type="text" id="nome" v-model="form.name">
       </div>
       <div>
-        <label for="location">Location:</label>
-        <input type="text" id="location" v-model="form.location">
+        <label for="endereco">Location:</label>
+        <input type="text" id="endereco" v-model="form.location">
       </div>
       <button type="submit">{{ editMode ? 'Update' : 'Register' }}</button>
     </form>
