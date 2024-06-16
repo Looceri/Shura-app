@@ -63,6 +63,7 @@ export default {
     },
     setup(props) {
         const form = useForm({
+            id: '',
             nome: '',
             endereco: '',
             descricao: '',
@@ -76,13 +77,22 @@ export default {
             () => props.restaurante,
             (newRestaurante) => {
                 if (newRestaurante) {
-                    form.nome = newRestaurante.name;
-                    form.endereco = newRestaurante.location;
+                    form.id = newRestaurante.id;
+                    form.nome = newRestaurante.nome;
+                    form.endereco = newRestaurante.endereco;
                     form.descricao = newRestaurante.descricao;
+                    if (newRestaurante.imagem) {
+                        const image = new Image();
+                        image.src = "storage/restaurantes/"+newRestaurante.imagem;
+                        image.onload = () => {
+                            form.image = image;
+                        };
+                    }
                 }
             },
             { immediate: true }
         );
+
 
         function handleImageUpload(event) {
             form.image = event.target.files[0];
@@ -99,12 +109,8 @@ export default {
                 // Append the file to the form data
                 formData.append('image', file);
             }
+            
             formData.append('user_id', userId.value); // Adicionando userId ao FormData
-
-            // Log para verificar se o FormData foi preenchido corretamente
-            for (let [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
-            }
 
             if (props.editMode) {
                 await Inertia.post(route('restaurantes.update', props.restaurante.id), formData, {

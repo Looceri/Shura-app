@@ -63,6 +63,7 @@ class RestauranteController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+
         if ($restaurante->user_id !== auth()->id()) {
             return redirect()->route('restaurantes.index')->with('error', 'Unauthorized action.');
         }
