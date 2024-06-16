@@ -2,29 +2,39 @@
     <form @submit.prevent="submit">
         <div>
             <InputLabel for="nome" value="Nome" />
-            <TextField id="nome" v-model="form.name" />
+            <TextInput id="nome" type="text" class="mt-1 block w-full" v-model="form.nome" required autofocus autocomplete="nome" />
         </div>
+        <br>
         <div>
             <InputLabel for="endereco" value="Endereço" />
-            <TextField id="endereco" v-model="form.location" />
+            <TextInput id="endereco" type="text" class="mt-1 block w-full" v-model="form.endereco" required autofocus autocomplete="endereco" />
         </div>
-        <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Criar</PrimaryButton>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
-                </Transition>
+        <br>
+        <div>
+            <InputLabel for="descricao">Descrição</InputLabel>
+            <textarea id="descricao" class="mt-1 block w-full dark:bg-gray-800 dark:text-white" v-model="form.descricao" rows="5"></textarea>
+        </div>
+        <br>
+        <div>
+            <InputLabel for="image">Imagem</InputLabel>
+            <input type="file" id="image" name="image" accept="image/*" @change="handleImageUpload" class="dark:bg-gray-800 dark:text-white">
+            <div v-if="form.image">
+                <img :src="form.image ? URL.createObjectURL(form.image) : ''" alt="Imagem do Restaurante" class="mt-2 rounded-md w-48 h-48 object-cover">
             </div>
-        <button type="submit">{{ editMode ? 'Update' : 'Register' }}</button>
+        </div>
+        <br>
+        <div class="flex items-center gap-4">
+            <PrimaryButton :disabled="form.processing" type="submit">{{ editMode ? 'Update' : 'Registrar' }}</PrimaryButton>
+            <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0" leave-active-class="transition ease-in-out" leave-to-class="opacity-0">
+                <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
+            </Transition>
+        </div>
+        <input type="hidden" id="user_id" name="user_id" v-model="userId">
     </form>
 </template>
 
 <script>
+import { useForm,usePage  } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import { ref, watch } from 'vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -45,31 +55,59 @@ export default {
         },
     },
     setup(props) {
-        const form = ref({
-            name: '',
-            location: '',
+        const form = useForm({
+            nome: '',
+            endereco: '',
+            descricao: '',
+            image: null,
         });
+
+        const page = usePage();
+        const userId = ref(page.props.auth.user.id); // Adicionando userId como uma referência
 
         watch(
             () => props.restaurante,
             (newRestaurante) => {
                 if (newRestaurante) {
-                    form.value.name = newRestaurante.name;
-                    form.value.location = newRestaurante.location;
+                    form.nome = newRestaurante.name;
+                    form.endereco = newRestaurante.location;
+                    form.descricao = newRestaurante.descricao;
                 }
             },
             { immediate: true }
         );
 
-        function submit() {
+        function handleImageUpload(event) {
+            form.image = event.target.files[0];
+        }
+
+        async function submit() {
+            const formData = new FormData();
+            formData.append('nome', form.nome);
+            formData.append('endereco', form.endereco);
+            formData.append('descricao', form.descricao);
+            if (form.image) {
+                formData.append('image', form.image);
+            }
+            formData.append('user_id', userId.value); // Adicionando userId ao FormData
+
+            // Log para verificar se o FormData foi preenchido corretamente
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+
             if (props.editMode) {
-                Inertia.put(route('restaurantes.update', props.restaurante.id), form.value);
+                await Inertia.post(route('restaurantes.update', props.restaurante.id), formData, {
+                    forceFormData: true
+                });
             } else {
-                Inertia.post(route('restaurantes.store'), form.value);
+                await Inertia.post(route('restaurantes.store'), formData, {
+                    forceFormData: true
+                });
             }
         }
 
-        return { form, submit };
+        return { form, userId, handleImageUpload, submit };
     },
 };
 </script>

@@ -1,9 +1,11 @@
 <template>
     <div>
-      <h1>Restaurant List</h1>
       <ul>
         <li v-for="restaurante in restaurantes" :key="restaurante.id">
-          {{ restaurante.name }} - {{ restaurante.location }}
+          <h2>{{ restaurante.name }}</h2>
+          <p>{{ restaurante.address }}</p>
+          <p>{{ restaurante.description }}</p>
+          <img :src="restaurante.image" alt="Restaurant Image">
           <button @click="editRestaurante(restaurante)">Edit</button>
         </li>
       </ul>

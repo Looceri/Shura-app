@@ -21,6 +21,7 @@ class RestauranteController extends Controller
             'location' => 'required',
         ]);
 
+        dd($request);
         Restaurante::create([
             'name' => $request->name,
             'location' => $request->location,
