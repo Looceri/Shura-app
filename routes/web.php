@@ -6,10 +6,14 @@ use App\Models\Restaurante;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
+Route::get('/menu', function () {
     $restaurantes = Restaurante::where('user_id','!=', auth()->id())->get();
     return Inertia::render('Dashboard', ['restaurantes' => $restaurantes]);
 })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+})->middleware(['auth', 'verified'])->name('start');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
