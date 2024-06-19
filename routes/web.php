@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use App\Models\Restaurante;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Dashboard');
+    $restaurantes = Restaurante::where('user_id','!=', auth()->id())->get();
+    return Inertia::render('Dashboard', ['restaurantes' => $restaurantes]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
