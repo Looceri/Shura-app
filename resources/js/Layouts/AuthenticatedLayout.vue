@@ -35,6 +35,10 @@ const showingNavigationDropdown = ref(false);
                                     :active="route().current('restaurantes.index')">
                                     Seus Restaurantes
                                 </NavLink>
+                                <NavLink :href="route('items.index')"
+                                    :active="route().current('items.index')">
+                                    Cardapios dos Restaurantes
+                                </NavLink>
                             </div>
                         </div>
 
@@ -99,6 +103,10 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('restaurantes.index')">
                             Seus Restaurantes
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('items.index')"
+                            :active="route().current('items.index')">
+                            Cardapios dos Restaurantes
+                        </ResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -112,8 +120,8 @@ const showingNavigationDropdown = ref(false);
 
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('restaurantes.index')"> Seus Restaurantes
-                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('restaurantes.index')"> Seus Restaurantes </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('items.index')">  Cardápios dos Restaurantes </ResponsiveNavLink>
 
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out

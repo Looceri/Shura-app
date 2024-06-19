@@ -25,3 +25,4 @@ require __DIR__.'/auth.php';
 
 require __DIR__.'/restaurant.php';
 
+require __DIR__.'/item.php';

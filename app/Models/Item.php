@@ -9,6 +9,14 @@ class item extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'nome',
+        'restaurante_id',
+        'preco',
+        'descricao',
+        'imagem',
+    ];
+
     public function reviews()
     {
         return $this->hasMany(Review::class);
@@ -17,5 +25,10 @@ class item extends Model
     public function pedidos()
     {
         return $this->belongsToMany(Pedido::class);
+    }
+
+    public function restaurante()
+    {
+        return $this->belongsTo(Restaurante::class);
     }
 }
