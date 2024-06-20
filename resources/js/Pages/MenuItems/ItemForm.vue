@@ -1,14 +1,29 @@
 <template>
+
     <form @submit.prevent="submit" enctype="multipart/form-data">
         <div>
             <InputLabel for="nome" value="Nome" />
             <TextInput id="nome" type="text" class="mt-1 block w-full" v-model="form.nome" required autofocus
                 autocomplete="nome" />
         </div>
+        <div>
+            <InputLabel for="preco" value="Preço" />
+            <TextInput id="preco" type="number" class="mt-1 block w-full" v-model="form.preco" required autofocus
+                autocomplete="preco" step="0.01" />
+        </div>
+        <br>
         <br>
         <div>
             <InputLabel for="restaurant_id">Restaurante</InputLabel>
-            <SelectInput id="restaurant_id" v-model="form.restaurante_id" :options="restaurantes" />
+            <div>
+                <select :id="id" v-model="form.restaurante_id" @change="emitChange"
+                    class="form-select block w-full mt-1 dark:bg-gray-800 dark:text-gray-300" :class="inputClass">
+                    <option disabled value="">{{ placeholder }}</option>
+                    <option v-for="restaurante in restaurantes" :key="restaurante.id" :value="restaurante.id">
+                        {{ restaurante.nome }}
+                    </option>
+                </select>
+            </div>
         </div>
         <br>
         <div>
@@ -18,11 +33,11 @@
         </div>
         <br>
         <div>
-            <InputLabel for="image">Imagem</InputLabel>
-            <input type="file" id="image" name="image" accept="image/*" @change="handleImageUpload"
+            <InputLabel for="imagem">Imagem</InputLabel>
+            <input type="file" id="imagem" name="imagem" accept="image/*" @change="handleImageUpload"
                 class="form-control-file dark:bg-gray-800 dark:text-white">
-            <div v-if="form.image">
-                <img :src="form.image ? URL.createObjectURL(form.image) : ''" alt="Imagem do Item"
+            <div v-if="form.imagem">
+                <img :src="form.imagem ? URL.createObjectURL(form.imagem) : ''" alt="Imagem do Item"
                     class="mt-2 rounded-md w-48 h-48 object-cover">
             </div>
         </div>
@@ -55,6 +70,14 @@ export default {
         PrimaryButton,
         SelectInput,
     },
+    methods: {
+        onRestauranteSelecionado(valorSelecionado) {
+            form.restaurante_id = valorSelecionado
+            id.value = valorSelecionado
+            console.log('Restaurante selecionado:', id);
+            // Utilize o valorSelecionado para realizar ações no seu componente pai
+        }
+    },
     props: {
         restaurantes: Array,
         item: Object,
@@ -62,18 +85,24 @@ export default {
             type: Boolean,
             default: false,
         },
+        placeholder: {
+            type: String,
+            default: 'Por favor selecione um restaurante'
+        },
     },
     setup(props) {
         const form = useForm({
             id: '',
             nome: '',
+            preco: 0,
             restaurante_id: '',
             descricao: '',
-            image: null,
+            imagem: null,
         });
 
         const page = usePage();
         const userId = ref(page.props.auth.user.id);
+        const id = '';
 
         watch(
             () => props.item,
@@ -82,15 +111,16 @@ export default {
                     form.id = newItem.id;
                     form.nome = newItem.nome;
                     form.restaurante_id = newItem.restaurante_id;
+                    form.preco = newItem.preco;
                     form.descricao = newItem.descricao;
-                    form.image = newItem.image ? newItem.image : null;
+                    form.imagem = newItem.imagem ? newItem.imagem : null;
                 }
             },
             { immediate: true }
         );
 
         function handleImageUpload(event) {
-            form.image = event.target.files[0];
+            form.imagem = event.target.files[0];
         }
 
 
@@ -99,11 +129,11 @@ export default {
             formData.append('nome', form.nome);
             formData.append('restaurante_id', form.restaurante_id);
             formData.append('descricao', form.descricao);
-            if (form.image) {
-                formData.append('image', form.image);
+            formData.append('preco', form.preco);
+            if (form.imagem) {
+                formData.append('imagem', form.imagem);
             }
             formData.append('user_id', userId.value);
-
             if (props.editMode) {
                 await Inertia.post(route('items.update', props.item.id), formData, {
                     forceFormData: true,
@@ -112,7 +142,6 @@ export default {
             } else {
                 await Inertia.post(route('items.store'), formData, {
                     forceFormData: true,
-                    onFinish: () => form.reset(),
                 });
             }
         }

@@ -17,7 +17,7 @@
                         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2">
                             Restaurante:
                         </h2>
-                        <p class="text-gray-800 dark:text-gray-200">{{ item.restaurante_id }}</p>
+                        <p class="text-gray-800 dark:text-gray-200">{{ item.restaurante_nome }}</p>
                     </div>
                     <br>
                     <div class="w-full">
@@ -50,6 +50,7 @@ export default {
     },
     props: {
         items: Array,
+        restaurantes: Array
     },
     emits: ['edit'],
     setup(props, { emit }) {
@@ -78,7 +79,8 @@ export default {
     border: 1px solid #ccc;
     border-radius: 5px;
     overflow: hidden;
-    padding: 2px; /* Add padding to the item card */
+    padding: 2px;
+    /* Add padding to the item card */
 }
 
 .card-image {

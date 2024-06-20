@@ -1,15 +1,11 @@
 <template>
     <div>
         <label :for="id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ label }}</label>
-        <select
-            :id="id"
-            v-model="internalValue"
-            @change="emitChange"
-            class="form-select block w-full mt-1 dark:bg-gray-800 dark:text-gray-300"
-            :class="inputClass">
+        <select :id="id" v-model="internalValue" @change="emitChange"
+            class="form-select block w-full mt-1 dark:bg-gray-800 dark:text-gray-300" :class="inputClass">
             <option disabled value="">{{ placeholder }}</option>
-            <option v-for="option in options" :key="option.id" :value="option.id">
-                {{ option.name }}
+            <option v-for="restaurante in restaurantes" :key="restaurante.id" :value="restaurante.id">
+                {{ restaurante.nome }}
             </option>
         </select>
     </div>
@@ -26,7 +22,7 @@ export default {
             type: [String, Number],
             required: true
         },
-        options: {
+        restaurantes: {
             type: Array,
             required: true
         },
@@ -56,10 +52,12 @@ export default {
     },
     methods: {
         emitChange(event) {
-            this.$emit('update:value', event.target.value);
+            const selectedValue = event.target.value;
+            this.$emit('update:value', selectedValue);
         }
     }
 }
+
 </script>
 
 <style scoped>

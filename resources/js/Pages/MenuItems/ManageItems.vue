@@ -1,7 +1,6 @@
 <template>
 
     <Head title="Items" />
-
     <AuthenticatedLayout>
         <template #header>
             <div class="flex flex-row justify-between">
@@ -35,7 +34,7 @@
                         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2">
                             Criar Items
                         </h2>
-                        <ItemForm @success="reloadItems" />
+                        <ItemForm :restaurantes="restaurantes" @success="reloadItems" />
                     </div>
                     <div v-if="currentTab === 'edit'">
                         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2">
