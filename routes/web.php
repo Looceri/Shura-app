@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/menu', function () {
-    $restaurantes = Restaurante::where('user_id','!=', auth()->id())->get();
-    $likes = Like::where('user_id', auth()->id())->get();
+    $restaurantes = Restaurante::where('user_id' ,'!=', auth()->id())->get();
+    $likes = Like::all();
     $totalUsers = User::count()-1;
     return Inertia::render('Dashboard', ['restaurantes' => $restaurantes, 'likes' => $likes, 'totalUsers' => $totalUsers]);
 })->middleware(['auth', 'verified'])->name('dashboard');

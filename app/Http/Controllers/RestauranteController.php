@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Restaurante;
 use App\Models\Like;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,13 +12,14 @@ class RestauranteController extends Controller
 {
     public function index()
     {
+        $likes = Like::all();
+        $totalUsers = User::count() - 1;
         $restaurantes = Restaurante::where('user_id', auth()->id())->get();
-        return Inertia::render('Restaurante/ManageRestaurantes', ['restaurantes' => $restaurantes]);
+        return Inertia::render('Restaurante/ManageRestaurantes', ['restaurantes' => $restaurantes, 'likes' => $likes, 'totalUsers' => $totalUsers]);
     }
 
     public function store(Request $request)
     {
-        dd($request);
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'endereco' => 'required|string|max:255',

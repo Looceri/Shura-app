@@ -3,11 +3,19 @@
         <ul class="restaurant-grid">
             <div class="flex items-center">
                 <li v-for="restaurante in restaurantes" :key="restaurante.id" class="restaurant-card">
-                    <div class="card-image">
-                        <img :src="'storage/restaurantes/' + restaurante.imagem" alt="Restaurant Image">
-                    </div>
-                    <div class="card-content">
+                    <div class="p-6 relative">
+                        <div class="relative">
+                            <img :src="'storage/restaurantes/' + restaurante.imagem" alt="Imagem do Restaurante"
+                                class="w-full h-48 object-cover rounded-md text-gray-800 dark:text-gray-200" />
 
+                            <!-- Contador de likes sobre a imagem -->
+                            <div class="absolute top-2 left-2 px-2 py-1 rounded-md text-white font-bold"
+                                :class="corDeFundoDosLikes(restaurante.id)">
+                                <span v-if="porcentagemLikes(restaurante.id) >= 100">👑</span>
+                                {{ likesCount(restaurante.id) }}
+                            </div>
+                        </div>
+                        <br>
                         <div class="w-1/2">
                             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2">Nome:
                             </h2>
@@ -50,6 +58,8 @@ export default {
     },
     props: {
         restaurantes: Array,
+        likes: Array,
+        totalUsers: Number
     },
     emits: ['edit'],
     setup(props, { emit }) {
@@ -59,6 +69,44 @@ export default {
 
         return { editRestaurante };
     },
+    computed: {
+        likesCount() {
+            return (restaurante_id) => {
+                return this.likes.filter(
+                    (like) => like.restaurante_id === restaurante_id,
+                ).length;
+            };
+        },
+        porcentagemLikes() {
+            return (restaurante_id) => {
+                const likesCount = this.likesCount(restaurante_id); // Assuming the first restaurant for example
+                const totalUsers = this.totalUsers;
+                if (typeof likesCount === 'number' && typeof totalUsers === 'number') {
+                    return (likesCount / totalUsers) * 100;
+                } else {
+                    return 0; // Return 0 or any default value if either likesCount or totalUsers is not a number
+                }
+            }
+        },
+        corDeFundoDosLikes() {
+            return (restaurante_id) => {
+                const likesCount = this.likesCount(restaurante_id);
+                const totalUsers = this.totalUsers;
+                if (typeof likesCount === 'number' && typeof totalUsers === 'number') {
+                    const percentage = (likesCount / totalUsers) * 100;
+                    if (percentage >= 70) {
+                        return 'bg-green-500';
+                    } else if (percentage >= 35) {
+                        return 'bg-yellow-400';
+                    } else {
+                        return 'bg-gray-400';
+                    }
+                } else {
+                    return 'bg-gray-400'; // Default color if either likesCount or totalUsers is not a number
+                }
+            };
+        },
+    }
 };
 </script>
 
@@ -78,7 +126,8 @@ export default {
     border: 1px solid #ccc;
     border-radius: 5px;
     overflow: hidden;
-    padding: 2px; /* Add padding to the restaurant card */
+    padding: 2px;
+    /* Add padding to the restaurant card */
 }
 
 .card-image {
@@ -96,5 +145,4 @@ export default {
 .card-content {
     padding: 10px;
 }
-
 </style>

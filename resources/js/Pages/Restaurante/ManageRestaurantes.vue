@@ -4,6 +4,7 @@
 
     <AuthenticatedLayout>
         <template #header>
+
             <div class="flex flex-row justify-between">
                 <div class="flex flex-col">
                     <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2">Restaurantes
@@ -41,7 +42,7 @@
                         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2">
                             Editar Restaurantes
                         </h2>
-                        <RestauranteList :restaurantes="restaurantes" @edit="handleEdit" />
+                        <RestauranteList :restaurantes="restaurantes"  :totalUsers="totalUsers" :likes="likes" @edit="handleEdit" />
                         <div v-if="selectedRestaurante">
                             <RestauranteForm :restaurante="selectedRestaurante" editMode
                                 @success="reloadRestaurantes" />
@@ -76,6 +77,8 @@ import { Head } from '@inertiajs/vue3';
 export default {
     props: {
         restaurantes: Array,
+        likes: Array,
+        totalUsers: Number
     },
     components: {
         AuthenticatedLayout,
