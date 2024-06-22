@@ -2,10 +2,23 @@
 
     <form @submit.prevent="submit" enctype="multipart/form-data">
         <div>
+            <InputLabel for="imagem">Imagem</InputLabel>
+            <div>
+                <div  class="card-image">
+                    <img :src="'storage/items/' + form.imagem" id="imagem_iluistartiva" alt="Escolha a sua imagem" class="text-gray-800 dark:text-gray-200">
+                    <br>
+                </div>
+                <input type="file" id="imagem" name="imagem" accept="image/*" @change="trocarImagens"
+                    class="form-control-file dark:bg-gray-800 dark:text-white">
+            </div>
+        </div>
+        <br>
+        <div>
             <InputLabel for="nome" value="Nome" />
             <TextInput id="nome" type="text" class="mt-1 block w-full" v-model="form.nome" required autofocus
                 autocomplete="nome" />
         </div>
+        <br>
         <div>
             <InputLabel for="preco" value="Preço" />
             <TextInput id="preco" type="number" class="mt-1 block w-full" v-model="form.preco" required autofocus
@@ -30,16 +43,6 @@
             <InputLabel for="descricao">Descrição</InputLabel>
             <textarea id="descricao" class="mt-1 block w-full dark:bg-gray-800 dark:text-white" v-model="form.descricao"
                 rows="5"></textarea>
-        </div>
-        <br>
-        <div>
-            <InputLabel for="imagem">Imagem</InputLabel>
-            <input type="file" id="imagem" name="imagem" accept="image/*" @change="handleImageUpload"
-                class="form-control-file dark:bg-gray-800 dark:text-white">
-            <div v-if="form.imagem">
-                <img :src="form.imagem ? URL.createObjectURL(form.imagem) : ''" alt="Imagem do Item"
-                    class="mt-2 rounded-md w-48 h-48 object-cover">
-            </div>
         </div>
         <br>
         <div class="flex items-center gap-4">
@@ -76,6 +79,14 @@ export default {
             id.value = valorSelecionado
             console.log('Restaurante selecionado:', id);
             // Utilize o valorSelecionado para realizar ações no seu componente pai
+        },
+        trocarImagens(event) {
+            this.imagem = event.target.files[0];
+            const imagemElement = document.getElementById('imagem_iluistartiva');
+            if (imagemElement) {
+                imagemElement.src = URL.createObjectURL(this.imagem);
+                form.imagem = this.imagem;
+            }
         }
     },
     props: {
@@ -103,6 +114,7 @@ export default {
         const page = usePage();
         const userId = ref(page.props.auth.user.id);
         const id = '';
+        const imagem = ''
 
         watch(
             () => props.item,
@@ -119,9 +131,7 @@ export default {
             { immediate: true }
         );
 
-        function handleImageUpload(event) {
-            form.imagem = event.target.files[0];
-        }
+
 
 
         async function submit() {
@@ -146,7 +156,23 @@ export default {
             }
         }
 
-        return { form, userId, handleImageUpload, submit };
+        return { form, imagem, userId, submit };
     },
 };
 </script>
+<style scoped>
+
+.card-image {
+    width: 100%;
+    height: 10cm;
+    overflow: hidden;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+</style>
