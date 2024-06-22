@@ -94,4 +94,9 @@ class RestauranteController extends Controller
 
         return redirect()->route('restaurantes.index');
     }
+
+    public function like(Request $request)
+    {
+        dd($request);
+    }
 }
