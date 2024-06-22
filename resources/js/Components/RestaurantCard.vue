@@ -11,27 +11,37 @@
             </div>
             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ restaurante.endereco }}</h3>
             <p class="text-gray-500 dark:text-gray-400">{{ restaurante.descricao }}</p>
-            <div class="mt-2">
-                <!-- Botão para adicionar aos favoritos -->
-                <button @click="addToFavorites"
-                    class="bg-gray-200 hover:bg-gray-300 text-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 font-bold py-2 px-4 rounded">
-                    Adicionar aos Favoritos
-                </button>
-            </div>
-            <div class="mt-2">
-                <!-- Botão para visualizar o cardápio (ou outras ações) -->
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Ver Cardápio
-                </button>
-            </div>
+            <form @submit.prevent="submit" enctype="multipart/form-data">
+                <div class="mt-2">
+                    <!-- Botão para adicionar aos favoritos -->
+                    <LikeButton @click="adicionarAosFavoritos(restaurante)"
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 font-bold py-2 px-4 rounded">
+                        Favoritar
+                    </LikeButton>
+                </div>
+                <div class="mt-2">
+                    <!-- Botão para visualizar o cardápio (ou outras ações) -->
+                    <CardapioButton @click="verCardapio(restaurante)"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Cardápio
+                    </CardapioButton>
+                </div>
+            </form>
         </div>
     </div>
 </template>
 
 <script>
+import CardapioButton from './CardapioButton.vue';
+import LikeButton from './LikesButton.vue';
+
 export default {
+    components: {
+        LikeButton,
+        CardapioButton
+    },
     props: {
         restaurante: Array,
-    },
+    }
 };
 </script>

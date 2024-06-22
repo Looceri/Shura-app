@@ -83,7 +83,7 @@ export default {
 
 .card-image {
     width: 100%;
-    height: 200px;
+    height: 5cm;
     overflow: hidden;
 }
 
@@ -96,4 +96,5 @@ export default {
 .card-content {
     padding: 10px;
 }
+
 </style>

@@ -4,7 +4,7 @@
         <div>
             <InputLabel for="imagem">Imagem</InputLabel>
             <div>
-                <div  class="card-image">
+                <div  class="card-image" id="image-card">
                     <img :src="'storage/items/' + form.imagem" id="imagem_iluistartiva" alt="Escolha a sua imagem" class="text-gray-800 dark:text-gray-200">
                     <br>
                 </div>
@@ -83,6 +83,8 @@ export default {
         trocarImagens(event) {
             this.imagem = event.target.files[0];
             const imagemElement = document.getElementById('imagem_iluistartiva');
+            const card = document.getElementById('image-card');
+            card.style.height = '10cm';
             if (imagemElement) {
                 imagemElement.src = URL.createObjectURL(this.imagem);
                 form.imagem = this.imagem;
@@ -160,11 +162,12 @@ export default {
     },
 };
 </script>
+
 <style scoped>
 
 .card-image {
     width: 100%;
-    height: 10cm;
+    height: 0;
     overflow: hidden;
     margin-top: 10px;
     margin-bottom: 10px;

@@ -1,5 +1,18 @@
 <template>
-    <form @submit.prevent="submit" enctype = "multipart/form-data">
+    <form @submit.prevent="submit" enctype="multipart/form-data">
+        <div>
+            <InputLabel for="imagem">Imagem</InputLabel>
+            <div>
+                <div class="card-image" id="image-card">
+                    <img :src="'storage/items/' + form.image" id="imagem_iluistartiva" alt="Escolha a sua imagem"
+                        class="text-gray-800 dark:text-gray-200">
+                    <br>
+                </div>
+                <input type="file" id="imagem" name="imagem" accept="image/*" @change="trocarImagens"
+                    class="form-control-file dark:bg-gray-800 dark:text-white">
+            </div>
+        </div>
+        <br>
         <div>
             <InputLabel for="nome" value="Nome" />
             <TextInput id="nome" type="text" class="mt-1 block w-full" v-model="form.nome" required autofocus
@@ -16,16 +29,6 @@
             <InputLabel for="descricao">Descrição</InputLabel>
             <textarea id="descricao" class="mt-1 block w-full dark:bg-gray-800 dark:text-white" v-model="form.descricao"
                 rows="5"></textarea>
-        </div>
-        <br>
-        <div>
-            <InputLabel for="image">Imagem</InputLabel>
-            <input type="file" id="image" name="image" accept="image/*" @change="handleImageUpload"
-                class="form-control-file dark:bg-gray-800 dark:text-white">
-            <div v-if="form.image">
-                <img :src="form.image ? URL.createObjectURL(form.image) : ''" alt="Imagem do Restaurante"
-                    class="mt-2 rounded-md w-48 h-48 object-cover">
-            </div>
         </div>
         <br>
         <div class="flex items-center gap-4">
@@ -60,6 +63,16 @@ export default {
             type: Boolean,
             default: false,
         },
+    }, methods: {
+        trocarImagens(event) {
+            this.imagem = event.target.files[0];
+            const imagemElement = document.getElementById('imagem_iluistartiva');
+            const card = document.getElementById('image-card');
+            card.style.height = '10cm';
+            if (imagemElement) {
+                imagemElement.src = URL.createObjectURL(this.imagem);
+            }
+        }
     },
     setup(props) {
         const form = useForm({
@@ -70,6 +83,7 @@ export default {
             image: null,
         });
 
+        const imagem = ''
         const page = usePage();
         const userId = ref(page.props.auth.user.id); // Adicionando userId como uma referência
 
@@ -83,7 +97,7 @@ export default {
                     form.descricao = newRestaurante.descricao;
                     if (newRestaurante.imagem) {
                         const image = new Image();
-                        image.src = "storage/restaurantes/"+newRestaurante.imagem;
+                        image.src = "storage/restaurantes/" + newRestaurante.imagem;
                         image.onload = () => {
                             form.image = image;
                         };
@@ -99,6 +113,7 @@ export default {
         }
 
         async function submit() {
+            form.image = this.imagem;
             const formData = new FormData();
             formData.append('nome', form.nome);
             formData.append('endereco', form.endereco);
@@ -109,9 +124,8 @@ export default {
                 // Append the file to the form data
                 formData.append('image', file);
             }
-            
-            formData.append('user_id', userId.value); // Adicionando userId ao FormData
 
+            formData.append('user_id', userId.value); // Adicionando userId ao FormData
             if (props.editMode) {
                 await Inertia.post(route('restaurantes.update', props.restaurante.id), formData, {
                     forceFormData: true
@@ -123,7 +137,23 @@ export default {
             }
         }
 
-        return { form, userId, handleImageUpload, submit };
+        return { form, imagem, userId, handleImageUpload, submit };
     },
 };
 </script>
+
+<style scoped>
+.card-image {
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+</style>
