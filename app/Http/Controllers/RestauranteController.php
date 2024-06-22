@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Restaurante;
+use App\Models\Like;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Storage;
 
 class RestauranteController extends Controller
 {
@@ -17,6 +17,7 @@ class RestauranteController extends Controller
 
     public function store(Request $request)
     {
+        dd($request);
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'endereco' => 'required|string|max:255',
@@ -97,6 +98,24 @@ class RestauranteController extends Controller
 
     public function like(Request $request)
     {
-        dd($request);
+        Like::create([
+            'user_id' => $request['user_id'],
+            'restaurante_id' => $request['restaurante_id']
+        ]);
+
+        return redirect()->route('dashboard');
+    }
+
+    public function unlike(Request $request)
+    {
+        $like = Like::where('user_id', $request['user_id'])
+            ->where('restaurante_id', $request['restaurante_id'])
+            ->first();
+
+        if ($like) {
+            $like->delete();
+        }
+
+        return redirect()->route('dashboard');
     }
 }
