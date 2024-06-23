@@ -23,7 +23,7 @@
             <p class="text-gray-500 dark:text-gray-400">
                 {{ restaurante.descricao }}
             </p>
-            <div class="flex gap-2">
+            <div>
                 <div>
                     <div class="mt-2 flex-1">
                         <LikeButton v-if="!isLiked" @click="adicionarAosFavoritos"
@@ -32,7 +32,7 @@
                         </LikeButton>
                         <DislikeButton v-else @click="removerDosFavoritos"
                             class="flex items-center justify-center bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                            Remover Favorito
+                            Desfavoritar
                         </DislikeButton>
                     </div>
                 </div>
@@ -42,24 +42,89 @@
                         Cardápio
                     </CardapioButton>
                 </div>
+                <div class="mt-2 flex-1">
+                    <ReviewButton @click="abrirPainel"
+                        class="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Review
+                    </ReviewButton>
+                </div>
             </div>
+        </div>
+    </div>
+    <div v-if="mostrarPainel" class="edit-box fixed inset-0 flex items-center justify-center z-50" @click="hideReview">
+        <div class="edit-box-content bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-96">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                Deixe sua Avaliação
+            </h2>
+
+            <form @submit.prevent="enviarAvaliacao">
+                <div class="mb-4">
+                    <InputLabel for="titulo" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Título
+                    </InputLabel>
+                    <TextInput v-model="titulo" type="text" id="titulo"
+                        class="mt-1 p-2 w-full border rounded-md dark:bg-gray-900 dark:border-gray-700 focus:ring-blue-500 focus:border-blue-500" required />
+                </div>
+
+                <div class="mb-4">
+                    <InputLabel for="descricao" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Descrição
+                    </InputLabel>
+                    <textarea v-model="descricao" id="descricao" rows="3"
+                        class="mt-1 p-2 w-full border rounded-md dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-300 focus:ring-blue-500 focus:border-blue-500" required ></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <InputLabel for="nota" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Nota (0-5)
+                    </InputLabel>
+                    <select v-model.number="nota" id="nota"
+                        class="mt-1 p-2 w-full border rounded-md dark:bg-gray-900 text-gray-700 dark:text-gray-300 dark:border-gray-700 focus:ring-blue-500 focus:border-blue-500" required >
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="flex justify-end">
+                    <SecondaryButton type="button" @click="fecharPainel"
+                        class="mr-2 px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
+                        Cancelar
+                    </SecondaryButton>
+                    <PrimaryButton type="submit"
+                        class="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
+                        Enviar
+                    </PrimaryButton>
+                </div>
+            </form>
         </div>
     </div>
 </template>
 
 <script>
+import PrimaryButton from './PrimaryButton.vue';
+import SecondaryButton from './SecondaryButton.vue';
+import ReviewButton from './ReviewButton.vue';
 import CardapioButton from './CardapioButton.vue';
 import LikeButton from './LikesButton.vue';
 import DislikeButton from './DislikesButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputLabel from '@/Components/InputLabel.vue';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
 export default {
     components: {
+        PrimaryButton,
+        SecondaryButton,
         LikeButton,
         CardapioButton,
         DislikeButton,
+        ReviewButton,
+        TextInput,
+        InputLabel
     },
     props: {
         restaurante: Object,
@@ -97,6 +162,14 @@ export default {
                 return 'bg-gray-400';
             }
         },
+    },
+    data() {
+        return {
+            mostrarPainel: false,
+            titulo: "",
+            descricao: "",
+            nota: null,
+        };
     },
     methods: {
         adicionarAosFavoritos() {
@@ -140,6 +213,66 @@ export default {
             // Implemente a lógica para visualizar o cardápio aqui
             console.log('Visualizando cardápio de:', restaurante.nome);
         },
+        darReview(restaurante) {
+            // Implemente a lógica para visualizar o cardápio aqui
+            console.log('Visualizando review de:', restaurante.nome);
+        },
+        abrirPainel() {
+            this.mostrarPainel = true;
+        },
+        hideReview(event) {
+            if (!event.target.closest('.edit-box-content')) {
+                this.mostrarPainel = false;
+            }
+        },
+        fecharPainel() {
+            this.mostrarPainel = false;
+            this.limparFormulario();
+        },
+        enviarAvaliacao() {
+            // Implemente aqui a lógica para enviar a avaliação (título, descrição, nota)
+            // para o seu backend ou API.
+            const formData = new FormData();
+
+            formData.append('titulo', this.titulo);
+            formData.append('descricao', this.descricao);
+            formData.append('nota', this.nota);
+            formData.append('restaurante_id', this.restaurante.id);
+            formData.append('user_id',  this.userId,);
+
+            Inertia.post(route('restaurantes.review'), formData, {
+                forceFormData: true
+            });
+
+            this.fecharPainel();
+        },
+        limparFormulario() {
+            this.titulo = "";
+            this.descricao = "";
+            this.nota = null;
+        },
     },
 };
 </script>
+
+<style scoped>
+.edit-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.edit-box-content {
+    padding: 20px;
+    border-radius: 5px;
+    width: 50%;
+    max-width: 600px;
+}
+</style>

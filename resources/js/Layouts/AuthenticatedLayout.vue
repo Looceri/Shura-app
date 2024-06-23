@@ -35,9 +35,12 @@ const showingNavigationDropdown = ref(false);
                                     :active="route().current('restaurantes.index')">
                                     Seus Restaurantes
                                 </NavLink>
-                                <NavLink :href="route('items.index')"
-                                    :active="route().current('items.index')">
+                                <NavLink :href="route('items.index')" :active="route().current('items.index')">
                                     Cardapios dos Restaurantes
+                                </NavLink>
+                                <NavLink :href="route('restaurantes.favoritos')"
+                                    :active="route().current('restaurantes.favoritos')">
+                                    Restaurantes Favotitos
                                 </NavLink>
                             </div>
                         </div>
@@ -103,9 +106,12 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('restaurantes.index')">
                             Seus Restaurantes
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('items.index')"
-                            :active="route().current('items.index')">
+                        <ResponsiveNavLink :href="route('items.index')" :active="route().current('items.index')">
                             Cardapios dos Restaurantes
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('restaurantes.favoritos')"
+                            :active="route().current('restaurantes.favoritos')">
+                            Restaurantes Favotitos
                         </ResponsiveNavLink>
                     </div>
 
@@ -119,10 +125,18 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('restaurantes.index')"> Seus Restaurantes </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('items.index')">  Cardápios dos Restaurantes </ResponsiveNavLink>
-
+                            <ResponsiveNavLink :href="route('profile.edit')">
+                                Profile
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('restaurantes.index')">
+                                Seus Restaurantes
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('items.index')">
+                                Cardápios dos Restaurantes
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('restaurantes.favoritos')">
+                                Restaurantes Favotitos
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out
                             </ResponsiveNavLink>

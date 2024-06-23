@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Restaurante;
 use App\Models\Like;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,6 +19,25 @@ class RestauranteController extends Controller
         return Inertia::render('Restaurante/ManageRestaurantes', ['restaurantes' => $restaurantes, 'likes' => $likes, 'totalUsers' => $totalUsers]);
     }
 
+    public function favoritos()
+    {
+        $userId = auth()->id();
+
+        // Get the likes made by the user
+        $likes = Like::where('user_id', $userId)->get();
+
+        // Get the total number of users (excluding the current user)
+        $totalUsers = User::where('id', '!=', $userId)->count();
+
+        // Get the restaurants that belong to the likes made by the user
+        $restaurantesIds = $likes->pluck('restaurante_id');
+        $restaurantes = Restaurante::whereIn('id', $restaurantesIds)->get();
+        return Inertia::render('Restaurante/RestaurantesFavoritos', [
+            'restaurantes' => $restaurantes,
+            'likes' => $likes,
+            'totalUsers' => $totalUsers,
+        ]);
+    }
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -104,8 +124,11 @@ class RestauranteController extends Controller
             'user_id' => $request['user_id'],
             'restaurante_id' => $request['restaurante_id']
         ]);
-
-        return redirect()->route('dashboard');
+        if ($request['fav']) {
+            return redirect()->route('restaurantes.favoritos');
+        } else {
+            return redirect()->route('dashboard');
+        }
     }
 
     public function unlike(Request $request)
@@ -118,6 +141,24 @@ class RestauranteController extends Controller
             $like->delete();
         }
 
+        if ($request['fav']) {
+            return redirect()->route('restaurantes.favoritos');
+        } else {
+            return redirect()->route('dashboard');
+        }
+    }
+
+    public function criarReview(Request $request)
+    {
+        Review::create([
+            'user_id' => $request['user_id'],
+            'restaurante_id' => $request['restaurante_id'],
+            'nota' => $request['nota'],
+            'descricao' => $request['descricao'],
+            'titulo' => $request['titulo'],
+        ]);
+
+        // Redirect to the desired page after creating the review
         return redirect()->route('dashboard');
     }
 }

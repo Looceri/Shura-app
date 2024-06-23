@@ -29,4 +29,9 @@ class restaurante extends Model
     {
         return $this->hasMany(Item::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

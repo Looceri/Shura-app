@@ -18,12 +18,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import RestaurantCard from '@/Components/RestaurantCard.vue';
+import RestaurantTab from '@/Components/RestaurantTab.vue'; // Import the RestaurantTab component
 import { Head } from '@inertiajs/vue3';
 
 defineProps({
     restaurantes: Array,
     likes: Array,
-    reviews: Array,
     totalUsers:Number
 });
 </script>

@@ -1,7 +1,6 @@
 <template>
     <div>
         <ul class="restaurant-grid">
-            <div class="flex items-center">
                 <li v-for="restaurante in restaurantes" :key="restaurante.id" class="restaurant-card">
                     <div class="p-6 relative">
                         <div class="relative">
@@ -41,7 +40,6 @@
                         <PrimaryButton @click="editRestaurante(restaurante)">Edit</PrimaryButton>
                     </div>
                 </li>
-            </div>
         </ul>
     </div>
 </template>

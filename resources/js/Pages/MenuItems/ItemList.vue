@@ -171,7 +171,7 @@ export default {
         const imagem = ''
 
         async function submit() {
-            console.log(this.imagem)
+            console.log(form)
         }
 
         return { form, imagem, submit };

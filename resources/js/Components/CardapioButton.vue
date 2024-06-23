@@ -24,7 +24,6 @@ export default {
 .icone {
     width: 16px;
     height: 16px;
-    fill: rgb(211, 3, 3);
     /* ou a cor que você preferir */
     margin-right: 5px;
 }
