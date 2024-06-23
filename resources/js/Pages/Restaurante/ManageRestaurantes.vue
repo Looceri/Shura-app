@@ -12,6 +12,7 @@
                 </div>
 
                 <div class="flex flex-row">
+
                     <div class="flex flex-col">
                         <button @click="currentTab = 'register'"
                             class="glow-button font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -25,6 +26,15 @@
                             Editar
                         </button>
                     </div>
+
+
+                    <div class="flex flex-col ml-2">
+                        <button @click="currentTab = 'pedidos'"
+                            class="glow-button font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                            Pedidos
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </template>
@@ -42,11 +52,18 @@
                         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2">
                             Editar Restaurantes
                         </h2>
-                        <RestauranteList :restaurantes="restaurantes"  :totalUsers="totalUsers" :likes="likes" @edit="handleEdit" />
+                        <RestauranteList :restaurantes="restaurantes" :totalUsers="totalUsers" :likes="likes"
+                            @edit="handleEdit" />
                         <div v-if="selectedRestaurante">
                             <RestauranteForm :restaurante="selectedRestaurante" editMode
                                 @success="reloadRestaurantes" />
                         </div>
+                    </div>
+                    <div v-if="currentTab === 'pedidos'">
+                        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2">
+                            Pedidos de Restaurantes
+                        </h2>
+                        <RestaurantePedidos :restaurantes="restaurantes" @success="reloadRestaurantes" />
                     </div>
                 </div>
             </div>
@@ -70,6 +87,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { ref } from 'vue';
 import RestauranteForm from './RestauranteForm.vue';
+import RestaurantePedidos from './RestaurantePedidos.vue';
 import RestauranteList from './RestauranteList.vue';
 import { Inertia } from '@inertiajs/inertia';
 import { Head } from '@inertiajs/vue3';
@@ -85,6 +103,7 @@ export default {
         Head,
         RestauranteForm,
         RestauranteList,
+        RestaurantePedidos
     },
     setup(props) {
         const currentTab = ref('register');

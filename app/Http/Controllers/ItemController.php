@@ -74,16 +74,46 @@ class ItemController extends Controller
     {
         $item = Item::findOrFail($id);
 
-        $validatedData = $request->validate([
-            'restaurante_id' => 'required|exists:restaurantes,id',
-            'preco' => 'required|numeric',
-            'descricao' => 'required|string',
-            'imagem' => 'nullable|string',
+        $data = ([
+            'nome' => $request['nome'],
+            'restaurante_id' => $request['restaurante_id'],
+            'preco' => $request['preco'],
+            'descricao' => $request['descricao'],
+            'imagem' => $request['imagem'],
         ]);
 
-        $item->update($validatedData);
 
-        return $item;
+        if ($request->hasFile('imagem')) {
+            $imagem = $request->file('imagem');
+            $imageName = time() . '.' . $imagem->getClientOriginalExtension();
+            $destinationPath = public_path('/storage/items/');
+
+            // Check if an imagem with the same name and size exists
+            $existingImagePath = $destinationPath . '/' . $imageName;
+            if (file_exists($existingImagePath) && filesize($existingImagePath) === $imagem->getSize()) {
+                // Use the existing imagem path
+                $data['imagem'] = $imageName;
+            } else {
+                // Delete the existing imagem if it exists
+                if ($item->imagem && file_exists($destinationPath . $item->imagem)) {
+                    unlink($destinationPath . $item->imagem);
+                }
+
+                // Move the uploaded imagem to the destination path
+                $imagem->move($destinationPath, $imageName);
+                $data['imagem'] = $imageName;
+            }
+        } elseif ($request->input('imagem') === null) {
+            // Delete the existing imagem if it exists
+            if ($item->imagem && file_exists(public_path('/storage/items/') . $item->imagem)) {
+                unlink(public_path('/storage/items/') . $item->imagem);
+            }
+
+            $data['imagem'] = null;
+        }
+
+        $item->update($data);
+
     }
 
     public function destroy($id)

@@ -3,7 +3,7 @@
         <ul class="item-grid">
             <li v-for="item in items" :key="item.id" class="item-card">
                 <div class="card-image">
-                    <img :src="'storage/items/' + item.imagem" alt="Item Image">
+                    <img :src="'storage/items/' + item.imagem" id="imagem_original" alt="Item Image">
                 </div>
                 <div class="card-content">
                     <div class="w-full">
@@ -110,6 +110,7 @@
 
 <script>
 import { useForm } from '@inertiajs/vue3';
+import { Inertia } from '@inertiajs/inertia';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -155,7 +156,6 @@ export default {
             const imagemElement = document.getElementById('imagem_iluistartiva');
             if (imagemElement) {
                 imagemElement.src = URL.createObjectURL(this.imagem);
-                form.imagem = this.imagem;
             }
         }
     },
@@ -170,8 +170,12 @@ export default {
         });
         const imagem = ''
 
-        async function submit() {
-            console.log(form)
+        function submit() {
+            this.form.imagem = this.imagem;
+            Inertia.post(route('items.update', this.form.id), this.form, {
+                forceFormData: true
+            });
+
         }
 
         return { form, imagem, submit };

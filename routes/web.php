@@ -13,7 +13,6 @@ Route::get('/menu', function () {
     $restaurantes = Restaurante::where('user_id', '!=', auth()->id())
         ->with('itens') // Eager load the user relationship
         ->get();
-    dd($restaurantes);
     $likes = Like::all();
     $totalUsers = User::count() - 1;
     // Get the reviews of the restaurants and eager load the related user
@@ -44,3 +43,5 @@ require __DIR__ . '/item.php';
 require __DIR__ . '/likes.php';
 
 require __DIR__ . '/reviews.php';
+
+require __DIR__ . '/pedidos.php';

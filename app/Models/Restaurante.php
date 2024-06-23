@@ -34,4 +34,9 @@ class restaurante extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class);
+    }
 }

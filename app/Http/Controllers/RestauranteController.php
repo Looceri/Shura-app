@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Restaurante;
 use App\Models\Like;
+use App\Models\pedido;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,7 +16,9 @@ class RestauranteController extends Controller
     {
         $likes = Like::all();
         $totalUsers = User::count() - 1;
-        $restaurantes = Restaurante::where('user_id', auth()->id())->get();
+        $restaurantes = Restaurante::where('user_id', auth()->id())
+        ->with('pedidos') // Eager load the user relationship
+        ->get();
         return Inertia::render('Restaurante/ManageRestaurantes', ['restaurantes' => $restaurantes, 'likes' => $likes, 'totalUsers' => $totalUsers]);
     }
 
@@ -135,11 +138,7 @@ class RestauranteController extends Controller
             'user_id' => $request['user_id'],
             'restaurante_id' => $request['restaurante_id']
         ]);
-        if ($request['fav']) {
-            return redirect()->route('restaurantes.favoritos');
-        } else {
-            return redirect()->route('dashboard');
-        }
+
     }
 
     public function unlike(Request $request)
@@ -152,11 +151,7 @@ class RestauranteController extends Controller
             $like->delete();
         }
 
-        if ($request['fav']) {
-            return redirect()->route('restaurantes.favoritos');
-        } else {
-            return redirect()->route('dashboard');
-        }
+
     }
 
     public function criarReview(Request $request)
@@ -170,6 +165,19 @@ class RestauranteController extends Controller
         ]);
 
         // Redirect to the desired page after creating the review
-        return redirect()->route('dashboard');
+    }
+
+
+    public function criarPedido(Request $request)
+    {
+
+        Pedido::create([
+            'user_id' => $request['user_id'],
+            'restaurante_id' => $request['restaurante_id'],
+            'itens' => json_encode($request['itens']),
+            'preco_total' => $request['preco_total'],
+        ]);
+
+        // Redirect to the desired page after creating the review
     }
 }
