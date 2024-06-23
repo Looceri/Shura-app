@@ -25,7 +25,7 @@ class restaurante extends Model
     }
 
     // A restaurant has many menu items
-    public function menuItems()
+    public function itens()
     {
         return $this->hasMany(Item::class);
     }

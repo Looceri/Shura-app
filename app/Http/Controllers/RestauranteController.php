@@ -31,11 +31,22 @@ class RestauranteController extends Controller
 
         // Get the restaurants that belong to the likes made by the user
         $restaurantesIds = $likes->pluck('restaurante_id');
-        $restaurantes = Restaurante::whereIn('id', $restaurantesIds)->get();
+        $restaurantes = Restaurante::whereIn('id', $restaurantesIds)
+            ->with('itens') // Eager load the user relationship
+            ->get();
+
+        // Get the reviews of the restaurants and eager load the related user
+        $reviews = Review::whereIn('restaurante_id', $restaurantes->pluck('id'))
+            ->with('user') // Eager load the user relationship
+            ->get();
+
+
+
         return Inertia::render('Restaurante/RestaurantesFavoritos', [
             'restaurantes' => $restaurantes,
             'likes' => $likes,
             'totalUsers' => $totalUsers,
+            'reviews' => $reviews,
         ]);
     }
     public function store(Request $request)

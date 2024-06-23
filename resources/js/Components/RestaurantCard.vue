@@ -9,10 +9,16 @@
                 <img :src="'storage/restaurantes/' + restaurante.imagem" alt="Imagem do Restaurante"
                     class="w-full h-48 object-cover rounded-md text-gray-800 dark:text-gray-200" />
 
+                <div class="absolute top-2 right-2 px-2 py-1 rounded-md text-white font-bold"
+                    :class="corDeFundoDasReviews">
+                    <span v-if="mediaNotas >= 4.5">👑 </span>
+                    {{ mediaNotas.toFixed(1) }}
+                </div>
+
                 <!-- Contador de likes com cores e coroa -->
                 <div class="absolute bottom-2 right-2 px-2 py-1 rounded-md text-white font-bold"
                     :class="corDeFundoDosLikes">
-                    <span v-if="porcentagemLikes >= 100">👑 </span>
+                    <span v-if="porcentagemLikes >= 90">👑 </span>
                     {{ likesCount }}
                 </div>
             </div>
@@ -37,7 +43,7 @@
                     </div>
                 </div>
                 <div class="mt-2 flex-1">
-                    <CardapioButton @click="verCardapio(restaurante)"
+                    <CardapioButton @click="abrirCardapio"
                         class="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Cardápio
                     </CardapioButton>
@@ -47,6 +53,12 @@
                         class="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Review
                     </ReviewButton>
+                </div>
+                <div class="mt-2 flex-1">
+                    <CommentsButton @click="showCommentsPanel = true"
+                        class="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Comentarios
+                    </CommentsButton>
                 </div>
             </div>
         </div>
@@ -63,7 +75,8 @@
                         Título
                     </InputLabel>
                     <TextInput v-model="titulo" type="text" id="titulo"
-                        class="mt-1 p-2 w-full border rounded-md dark:bg-gray-900 dark:border-gray-700 focus:ring-blue-500 focus:border-blue-500" required />
+                        class="mt-1 p-2 w-full border rounded-md dark:bg-gray-900 dark:border-gray-700 focus:ring-blue-500 focus:border-blue-500"
+                        required />
                 </div>
 
                 <div class="mb-4">
@@ -71,7 +84,8 @@
                         Descrição
                     </InputLabel>
                     <textarea v-model="descricao" id="descricao" rows="3"
-                        class="mt-1 p-2 w-full border rounded-md dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-300 focus:ring-blue-500 focus:border-blue-500" required ></textarea>
+                        class="mt-1 p-2 w-full border rounded-md dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                        required></textarea>
                 </div>
 
                 <div class="mb-4">
@@ -79,7 +93,8 @@
                         Nota (0-5)
                     </InputLabel>
                     <select v-model.number="nota" id="nota"
-                        class="mt-1 p-2 w-full border rounded-md dark:bg-gray-900 text-gray-700 dark:text-gray-300 dark:border-gray-700 focus:ring-blue-500 focus:border-blue-500" required >
+                        class="mt-1 p-2 w-full border rounded-md dark:bg-gray-900 text-gray-700 dark:text-gray-300 dark:border-gray-700 focus:ring-blue-500 focus:border-blue-500"
+                        required>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -100,6 +115,43 @@
             </form>
         </div>
     </div>
+
+    <transition name="slide-fade">
+        <div v-if="showCommentsPanel"
+            class="comments-panel fixed inset-0 flex  justify-center z-50 bg-gray-900 bg-opacity-90"
+            @click="hideCommentsPanel">
+            <div class="comments-panel-content bg-gray-800 text-white p-6 shadow-xl w-96" @click.stop>
+                <h2 class="text-2xl font-bold mb-4">Comentários</h2>
+                <div v-if="reviewsForRestaurant.length > 0" class="reviews">
+                    <div v-for="review in reviewsForRestaurant" :key="review.id"
+                        class="review p-4 rounded-lg shadow-md mb-4 bg-gray-700">
+                        <div class="flex items-start mb-2">
+                            <span class="font-bold">{{ review.user.name }}</span>
+                            <span class="text-gray-400 text-sm ml-auto">{{ formatDate(review.created_at) }}</span>
+                        </div>
+                        <p class="text-gray-300">{{ review.descricao }}</p>
+                        <div class="flex items-center mt-2">
+                            <StarRating :rating="review.nota" />
+                        </div>
+                    </div>
+                    <PrimaryButton @click="showCommentsPanel = false" class="mt-4">
+                        Fechar
+                    </PrimaryButton>
+                </div>
+                <div v-else>
+                    <p class="text-gray-400">Seja o primeiro a comentar!</p>
+                    <div class="mt-2 flex-1">
+                        <ReviewButton @click="abrirPainel"
+                            class="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Review
+                        </ReviewButton>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </transition>
+
 </template>
 
 <script>
@@ -109,11 +161,13 @@ import ReviewButton from './ReviewButton.vue';
 import CardapioButton from './CardapioButton.vue';
 import LikeButton from './LikesButton.vue';
 import DislikeButton from './DislikesButton.vue';
+import CommentsButton from './CommentsButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import StarRating from './StarRating.vue';
 
 export default {
     components: {
@@ -124,11 +178,14 @@ export default {
         DislikeButton,
         ReviewButton,
         TextInput,
-        InputLabel
+        InputLabel,
+        CommentsButton,
+        StarRating
     },
     props: {
         restaurante: Object,
         likes: Array,
+        reviews: Array,
         totalUsers: Number, // Adicione a prop totalUsers
     },
     setup(props) {
@@ -145,6 +202,18 @@ export default {
         return { userId, isLiked };
     },
     computed: {
+        mediaNotas() {
+            const notas = this.reviews.filter(
+                (review) => review.restaurante_id === this.restaurante.id,
+            ).map((review) => review.nota);
+
+            if (notas.length === 0) {
+                return 0;
+            }
+
+            const somaDasNotas = notas.reduce((total, nota) => total + nota, 0);
+            return somaDasNotas / notas.length;
+        },
         likesCount() {
             return this.likes.filter(
                 (like) => like.restaurante_id === this.restaurante.id,
@@ -162,6 +231,20 @@ export default {
                 return 'bg-gray-400';
             }
         },
+        corDeFundoDasReviews() {
+            if (this.mediaNotas >= 4.0) {
+                return 'bg-green-500';
+            } else if (this.mediaNotas >= 2.5) {
+                return 'bg-yellow-400';
+            } else {
+                return 'bg-gray-400';
+            }
+        },
+        reviewsForRestaurant() {
+            return this.reviews.filter(
+                (review) => review.restaurante_id === this.restaurante.id
+            );
+        },
     },
     data() {
         return {
@@ -169,6 +252,7 @@ export default {
             titulo: "",
             descricao: "",
             nota: null,
+            showCommentsPanel: false,
         };
     },
     methods: {
@@ -219,6 +303,7 @@ export default {
         },
         abrirPainel() {
             this.mostrarPainel = true;
+            this.showCommentsPanel = false
         },
         hideReview(event) {
             if (!event.target.closest('.edit-box-content')) {
@@ -238,7 +323,7 @@ export default {
             formData.append('descricao', this.descricao);
             formData.append('nota', this.nota);
             formData.append('restaurante_id', this.restaurante.id);
-            formData.append('user_id',  this.userId,);
+            formData.append('user_id', this.userId,);
 
             Inertia.post(route('restaurantes.review'), formData, {
                 forceFormData: true
@@ -251,11 +336,46 @@ export default {
             this.descricao = "";
             this.nota = null;
         },
+        formatDate(dateString) {
+            // Formata a data para exibição (ajuste o formato conforme necessário)
+            const date = new Date(dateString);
+            return date.toLocaleDateString();
+        },
+        hideCommentsPanel(event) {
+            // Verifica se o clique foi fora do conteúdo do painel
+            if (!event.target.closest('.comments-panel')) {
+                this.showCommentsPanel = false;
+            }
+        },
     },
 };
 </script>
 
 <style scoped>
+.comments-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0;
+    width: 300px;
+    height: 100vh;
+    background-color: #f5f5f5;
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 9999;
+}
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+    transition: all 0.3s ease;
+}
+
+.slide-fade-enter,
+.slide-fade-leave-to {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
 .edit-box {
     position: fixed;
     top: 0;
@@ -274,5 +394,36 @@ export default {
     border-radius: 5px;
     width: 50%;
     max-width: 600px;
+}
+
+.comments-panel {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    padding: 0;
+    /* Start off-screen to the right */
+    width: 300px;
+    height: 100vh;
+    background-color: #f5f5f5;
+    overflow-y: auto;
+    z-index: 9999;
+    transition: right 0.3s ease;
+    /* Add a transition effect */
+}
+
+.comments-panel.show {
+    right: 0;
+    /* Slide in from the right */
+}
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+    transition: all 0.3s ease;
+}
+
+.slide-fade-enter,
+.slide-fade-leave-to {
+    transform: translateX(100%);
+    opacity: 0;
 }
 </style>
