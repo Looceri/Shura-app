@@ -154,6 +154,7 @@ export default {
         trocarImagens(event) {
             this.imagem = event.target.files[0];
             const imagemElement = document.getElementById('imagem_iluistartiva');
+            console.log(imagemElement);
             if (imagemElement) {
                 imagemElement.src = URL.createObjectURL(this.imagem);
             }

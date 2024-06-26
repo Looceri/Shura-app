@@ -198,7 +198,7 @@
                             <span class="font-bold">{{ review.user.name }}</span>
                             <span class="text-gray-400 text-sm ml-auto">{{
                                 formatDate(review.created_at)
-                            }}</span>
+                                }}</span>
                         </div>
                         <p class="text-gray-300">{{ review.descricao }}</p>
                         <div class="flex items-center mt-2">
